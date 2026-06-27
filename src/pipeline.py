@@ -48,6 +48,55 @@ def process_data(entrance_path, exit_path):
         corrections[col] if col in corrections else
         GoogleTranslator(source='auto', target='en').translate(col) for col in df.columns
     ]
+
+    # ===================================================================
+    # 1.1 AUTOMATIC DATA TYPE CORRECTION
+    # ===================================================================
+
+    print("Correcting data types automatically...")
+    for col in df.columns:
+        # 1. Try convert for DataTime if the name of columns suggests time
+        if 'date' in col or 'time' in col or 'data' in col:
+            converted_date = pd.to_datetime(df[col], errors='coerce')
+            if not converted_date.isna().all():
+                df[col] = converted_date
+                print(f".  -> Column '{col}' converted to DATATIME")
+                continue
+
+        # Try convert for columns that should be numeric
+        if pd.api.types.is_object_dtype(df[col]):
+            converted_num = pd.to_numeric(df[col], errors='coerce')
+            if converted_num.notna().sum() > (0.8 * len(df)):
+                df[col] = converted_num
+                print(f"    -> Column '{col}' identified as NUMERIC")
+            else:
+                df[col] = df[col].astype(str)
+        elif pd.api.types.is_numeric_dtype(df[col]):
+            print(f".   -> Column '{col}' preserved as NUMERIC")
+
+    # ===================================================================
+    # 1.2 SMART NULL VALUES (NaN) TREATMENT
+    # ===================================================================
+
+    print('\nAppling smart rules for Null (NaN) values...')
+
+    # Rule A: if the main columns of identification of product/client is null, delete line
+    id_columns = ['product', 'name', 'id']
+    for col in df.columns:
+        if col in df.columns:
+            df = df.dropna(subset=[col])
+            print(f".  -> Rows with null '{col}' were dropped.")
+
+    # Rule B: Columns of generics text (with city) become 'Not Provided'
+    text_columns = df.select_dtypes(include=['object']).columns
+    for col in df.columns:
+        df[col] = df[col].fillna('Not provided')
+
+    # Rule C: Columns specifics numerics of age receive median
+    if 'age' in df.columns:
+        df['age'] = df['age'].fillna(df['age'].median())
+        print(".   -> Nulls in 'age' filled with median.")
+
     # ========================================================================
     # 2. SPECIFIC TREATMENTS - Only run if the columns exists
     # =======================================================================
@@ -70,14 +119,9 @@ def process_data(entrance_path, exit_path):
         df['time_sale'] = pd.to_datetime(df['time_sale'], errors='coerce')
         print(".  - Columns 'time_sale' converted for to format correct. ")
 
-    # ===============================================================
-    # 3. FINAL TREATMENT OF RESIDUAL NULLS
-    # ===============================================================
-
-    # Any remaining empty space in text columns becomes "not provided."
-    df = df.fillna('Not provided')
-
-    # Save Step
+    # ==========================================================
+    #                          EXPORT
+    # ==========================================================
     print(f"Salving cleaning data in: {exit_path}")
     df.to_csv(exit_path, index=False)
     print('Pipeline executed successfully!')

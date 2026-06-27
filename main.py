@@ -6,10 +6,10 @@ if __name__ == "__main__":
     print("-- PROCESSING CLIENTS --")
     process_data('data/raw_data.csv', 'data/clean_data.csv')
 
-    print('\n-----------------------------------------------')
+    # print('\n-----------------------------------------------')
 
-    print("-- PROCESSING SALES")
-    process_data('data/data_sales.csv', 'data/clean_sales.csv')
+    # print("-- PROCESSING SALES")
+    # process_data('data/data_sales.csv', 'data/clean_sales.csv')
 
     # Path th files
     # RAW_FILE = 'data/raw_data.csv'

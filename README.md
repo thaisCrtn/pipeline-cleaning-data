@@ -12,3 +12,4 @@ The project is structured in a modular way:
 - Implement logs to record errors.
 - Conect the pipeline directly the a database SQL.
 - Create unit tests to validate the data.
+- Create MissingDetector, ImputationStraterySelector, DataCleanerPipeline
