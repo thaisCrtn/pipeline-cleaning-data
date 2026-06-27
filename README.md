@@ -17,6 +17,23 @@ A dynamic and automated data engineering pipeline developed using Python and Pan
 
 ---
 
+## Technologies used 
+
+- Python 3.13
+- Pandas
+- Deep Translator
+
+---
+
+## Next steps to improve
+- Add treat outliers.
+- Implement logs to record errors.
+- Conect the pipeline directly the a database SQL.
+- Create unit tests to validate the data.
+- Create MissingDetector, ImputationStraterySelector, DataCleanerPipeline
+
+---
+
 ## Project Structure
 
 ```text
@@ -29,16 +46,3 @@ pipeline-cleaning-data/
 ├── src/                   # Modular source code
  
 ---
-
-## Technologies used 
-
-- Python 3.13
-- Pandas
-- Deep Translator
-
-## Next steps to improve
-- Add treat outliers.
-- Implement logs to record errors.
-- Conect the pipeline directly the a database SQL.
-- Create unit tests to validate the data.
-- Create MissingDetector, ImputationStraterySelector, DataCleanerPipeline
